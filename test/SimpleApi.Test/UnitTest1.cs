@@ -13,7 +13,7 @@ namespace SimpleApi.Test
             var weatherController = new WeatherForecastController();
 
             var val = weatherController.Get();
-            Assert.Equal(5, val.Count());
+            Assert.Equal(6, val.Count());
         }
     }
 }
