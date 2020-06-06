@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Bogus;
-using LazyCache;
+﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SimpleAPI.Commands;
-using SimpleAPI.Models;
 using SimpleAPI.Queries;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -40,7 +34,7 @@ namespace SimpleAPI.Controllers
         {
             var query = new GetBookByIdQuery(id);
             var book = await _mediator.Send(query).ConfigureAwait(false);
-            
+
             if (book != null)
                 return Ok(book);
 
