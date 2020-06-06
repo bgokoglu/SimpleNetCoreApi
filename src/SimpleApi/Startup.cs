@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using LazyCache;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SimpleAPI.Models;
 
 namespace SimpleApi
 {
@@ -26,10 +30,12 @@ namespace SimpleApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddLazyCache();
+            services.AddMediatR(typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IAppCache cache)
         {
             if (env.IsDevelopment())
             {
@@ -45,6 +51,17 @@ namespace SimpleApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            //init books, this would be a db op
+            cache.GetOrAdd("books_in_cache", () =>
+            {
+                var lst = new List<Book>();
+                for (int i = 1; i < 6; i++)
+                {
+                    lst.Add(new Book { Id = i, Title = "Book " + i });
+                }
+                return lst;
             });
         }
     }
