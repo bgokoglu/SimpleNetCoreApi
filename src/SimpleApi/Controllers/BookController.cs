@@ -40,7 +40,11 @@ namespace SimpleAPI.Controllers
         {
             var query = new GetBookByIdQuery(id);
             var book = await _mediator.Send(query).ConfigureAwait(false);
-            return book != null ? Ok(book) : (IActionResult)NotFound();
+            
+            if (book != null)
+                return Ok(book);
+
+            return (IActionResult)NoContent();
         }
 
         // POST api/<BookController>
@@ -52,19 +56,32 @@ namespace SimpleAPI.Controllers
             if (book != null)
                 return CreatedAtAction("Post", book);
 
-            return BadRequest();
+            return NoContent();
         }
 
         // PUT api/<BookController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> PutAsync(int id, [FromBody] UpdateBookCommand command)
         {
+            command.Id = id;
+            var book = await _mediator.Send(command).ConfigureAwait(false);
+
+            if (book != null)
+                return AcceptedAtAction("Put", book);
+
+            return NoContent();
         }
 
         // DELETE api/<BookController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
+            var book = await _mediator.Send(new DeleteBookCommand { Id = id }).ConfigureAwait(false);
+
+            if (book != null)
+                return AcceptedAtAction("Delete", book);
+
+            return NoContent();
         }
     }
 }

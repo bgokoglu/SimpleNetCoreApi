@@ -22,7 +22,7 @@ namespace SimpleAPI.Handlers
 
         public async Task<List<Book>> Handle(GetAllBooksQuery request, CancellationToken cancellationToken)
         {
-            return await _cache.GetAsync<List<Book>>("books_in_cache").ConfigureAwait(false);
+            return await _cache.GetAsync<List<Book>>("books_in_cache").ConfigureAwait(false) ?? new List<Book>();
         }
     }
 }

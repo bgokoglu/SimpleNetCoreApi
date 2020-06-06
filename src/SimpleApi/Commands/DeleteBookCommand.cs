@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace SimpleAPI.Commands
 {
-    public class CreateBookCommand : UpdateBookCommand, IRequest<Book>
+    public class DeleteBookCommand : IRequest<Book>
     {
-        public string Title { get; set; }
+        public int Id { get; set; }
     }
 }
