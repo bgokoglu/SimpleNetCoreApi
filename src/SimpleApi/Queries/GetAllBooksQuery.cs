@@ -1,10 +1,11 @@
 ﻿using MediatR;
-using SimpleAPI.Models;
+using SimpleAPI.Core;
+using SimpleAPI.Domain;
 using System.Collections.Generic;
 
 namespace SimpleAPI.Queries
 {
-    public class GetAllBooksQuery : IRequest<List<Book>>
+    public class GetAllBooksQuery : IRequest<Response>
     {
     }
 }

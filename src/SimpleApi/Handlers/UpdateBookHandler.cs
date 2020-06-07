@@ -1,14 +1,15 @@
 ﻿using LazyCache;
 using MediatR;
 using SimpleAPI.Commands;
-using SimpleAPI.Models;
+using SimpleAPI.Core;
+using SimpleAPI.Domain;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SimpleAPI.Handlers
 {
-    public class UpdateBookHandler : IRequestHandler<UpdateBookCommand, Book>
+    public class UpdateBookHandler : IRequestHandler<UpdateBookCommand, Response>
     {
         private readonly IAppCache _cache;
 
@@ -17,7 +18,7 @@ namespace SimpleAPI.Handlers
             _cache = cache;
         }
 
-        public async Task<Book> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
         {
             var books = await _cache.GetAsync<List<Book>>("books_in_cache").ConfigureAwait(false) ?? new List<Book>();
 
@@ -29,7 +30,7 @@ namespace SimpleAPI.Handlers
                 _cache.Add("books_in_cache", books);
             }
 
-            return book;
+            return new Response(book);
         }
     }
 }

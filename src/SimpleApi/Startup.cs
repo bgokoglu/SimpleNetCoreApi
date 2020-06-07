@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FluentValidation;
 using LazyCache;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -6,7 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SimpleAPI.Models;
+using SimpleAPI.Commands;
+using SimpleAPI.Domain;
+using SimpleAPI.PipelineBehaviors;
 
 namespace SimpleApi
 {
@@ -24,6 +27,13 @@ namespace SimpleApi
         {
             services.AddControllers();
             services.AddLazyCache();
+
+            //AssemblyScanner.FindValidatorsInAssembly(typeof(Startup).Assembly)
+            //    .ForEach(result => services.AddScoped(result.InterfaceType, result.ValidatorType));
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddValidatorsFromAssembly(typeof(Startup).Assembly);
+
             services.AddMediatR(typeof(Startup));
         }
 

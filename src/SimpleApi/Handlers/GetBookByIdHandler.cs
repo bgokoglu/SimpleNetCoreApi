@@ -1,6 +1,7 @@
 ﻿using LazyCache;
 using MediatR;
-using SimpleAPI.Models;
+using SimpleAPI.Core;
+using SimpleAPI.Domain;
 using SimpleAPI.Queries;
 using System.Collections.Generic;
 using System.Threading;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SimpleAPI.Handlers
 {
-    public class GetBookByIdHandler : IRequestHandler<GetBookByIdQuery, Book>
+    public class GetBookByIdHandler : IRequestHandler<GetBookByIdQuery, Response>
     {
         private readonly IAppCache _cache;
 
@@ -17,14 +18,14 @@ namespace SimpleAPI.Handlers
             _cache = cache;
         }
 
-        public async Task<Book> Handle(GetBookByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(GetBookByIdQuery request, CancellationToken cancellationToken)
         {
             var books = await _cache.GetAsync<List<Book>>("books_in_cache").ConfigureAwait(false);
 
             if (books == null || books.Count == 0)
-                return null;
+                return new Response(null);
 
-            return books.Find(p => p.Id == request.BookId);
+            return new Response(books.Find(p => p.Id == request.BookId));
         }
     }
 }

@@ -1,9 +1,12 @@
-﻿using MediatR;
-using SimpleAPI.Models;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using MediatR;
+using SimpleAPI.Core;
+using SimpleAPI.Domain;
 
 namespace SimpleAPI.Commands
 {
-    public class UpdateBookCommand : IRequest<Book>
+    public class UpdateBookCommand : IRequest<Response>
     {
         public int Id { get; set; }
 

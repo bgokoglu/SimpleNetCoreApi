@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SimpleAPI.Commands;
+using SimpleAPI.Models;
 using SimpleAPI.Queries;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -24,8 +26,8 @@ namespace SimpleAPI.Controllers
         public async Task<IActionResult> GetAsync()
         {
             var query = new GetAllBooksQuery();
-            var books = await _mediator.Send(query).ConfigureAwait(false);
-            return Ok(books);
+            var response = await _mediator.Send(query).ConfigureAwait(false);
+            return Ok(response.Result);
         }
 
         // GET api/<BookController>/5
@@ -33,35 +35,37 @@ namespace SimpleAPI.Controllers
         public async Task<IActionResult> GetAsync(int id)
         {
             var query = new GetBookByIdQuery(id);
-            var book = await _mediator.Send(query).ConfigureAwait(false);
+            var response = await _mediator.Send(query).ConfigureAwait(false);
 
-            if (book != null)
-                return Ok(book);
+            if (response != null)
+                return Ok(response.Result);
 
-            return (IActionResult)NoContent();
+            return NoContent();
         }
 
         // POST api/<BookController>
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] CreateBookCommand command)
         {
-            var book = await _mediator.Send(command).ConfigureAwait(false);
+            var response = await _mediator.Send(command).ConfigureAwait(false);
 
-            if (book != null)
-                return CreatedAtAction("Post", book);
+            if (response == null)
+                return NoContent();
 
-            return NoContent();
+            if (response.Errors.Any())
+                return BadRequest(new { error = response.Errors });
+
+            return CreatedAtAction("Post", response.Result);
         }
 
         // PUT api/<BookController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAsync(int id, [FromBody] UpdateBookCommand command)
+        public async Task<IActionResult> PutAsync(int id, [FromBody] BookModel model)
         {
-            command.Id = id;
-            var book = await _mediator.Send(command).ConfigureAwait(false);
+            var response = await _mediator.Send(new UpdateBookCommand { Id = id, Title = model.Title }).ConfigureAwait(false);
 
-            if (book != null)
-                return AcceptedAtAction("Put", book);
+            if (response != null)
+                return AcceptedAtAction("Put", response.Result);
 
             return NoContent();
         }
@@ -70,10 +74,10 @@ namespace SimpleAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var book = await _mediator.Send(new DeleteBookCommand { Id = id }).ConfigureAwait(false);
+            var response = await _mediator.Send(new DeleteBookCommand { Id = id }).ConfigureAwait(false);
 
-            if (book != null)
-                return AcceptedAtAction("Delete", book);
+            if (response != null)
+                return AcceptedAtAction("Delete", response.Result);
 
             return NoContent();
         }

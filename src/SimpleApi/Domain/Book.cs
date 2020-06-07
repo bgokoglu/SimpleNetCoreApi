@@ -1,4 +1,4 @@
-﻿namespace SimpleAPI.Models
+﻿namespace SimpleAPI.Domain
 {
     public class Book
     {

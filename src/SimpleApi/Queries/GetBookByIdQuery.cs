@@ -1,9 +1,10 @@
 ﻿using MediatR;
-using SimpleAPI.Models;
+using SimpleAPI.Core;
+using SimpleAPI.Domain;
 
 namespace SimpleAPI.Queries
 {
-    public class GetBookByIdQuery : IRequest<Book>
+    public class GetBookByIdQuery : IRequest<Response>
     {
         public int BookId { get; }
 
