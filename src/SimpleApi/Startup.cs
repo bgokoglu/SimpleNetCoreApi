@@ -10,6 +10,9 @@ using Microsoft.Extensions.Hosting;
 using SimpleAPI.Commands;
 using SimpleAPI.Domain;
 using SimpleAPI.PipelineBehaviors;
+using SimpleAPI.Repositories;
+using SimpleAPI.Repositories.Cached;
+using SimpleAPI.Repositories.Interface;
 
 namespace SimpleApi
 {
@@ -30,6 +33,9 @@ namespace SimpleApi
 
             //AssemblyScanner.FindValidatorsInAssembly(typeof(Startup).Assembly)
             //    .ForEach(result => services.AddScoped(result.InterfaceType, result.ValidatorType));
+
+            services.AddSingleton<IRepository<Book>, BookRepository>();
+            services.Decorate<IRepository<Book>, CachedBookRepository>();
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddValidatorsFromAssembly(typeof(Startup).Assembly);
@@ -54,17 +60,6 @@ namespace SimpleApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });
-
-            //init books, this would be a db op
-            cache.GetOrAdd("books_in_cache", () =>
-            {
-                var lst = new List<Book>();
-                for (int i = 1; i < 6; i++)
-                {
-                    lst.Add(new Book { Id = i, Title = "Book " + i });
-                }
-                return lst;
             });
         }
     }

@@ -3,6 +3,7 @@ using MediatR;
 using SimpleAPI.Commands;
 using SimpleAPI.Core;
 using SimpleAPI.Domain;
+using SimpleAPI.Repositories.Interface;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,21 +12,16 @@ namespace SimpleAPI.Handlers
 {
     public class CreateBookHandler : IRequestHandler<CreateBookCommand, Response>
     {
-        private readonly IAppCache _cache;
+        private readonly IRepository<Book> _repository;
 
-        public CreateBookHandler(IAppCache cache)
+        public CreateBookHandler(IRepository<Book> repository)
         {
-            _cache = cache;
+            _repository = repository;
         }
 
         public async Task<Response> Handle(CreateBookCommand request, CancellationToken cancellationToken)
         {
-            List<Book> books = await _cache.GetAsync<List<Book>>("books_in_cache").ConfigureAwait(false) ?? new List<Book>();
-
-            var book = new Book { Id = books.Count + 1, Title = request.Title };
-            books.Add(book);
-            _cache.Add("books_in_cache", books);
-
+            var book = await _repository.Add(new Book { Title = request.Title }).ConfigureAwait(false);
             return new Response(book);
         }
     }
