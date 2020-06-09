@@ -60,7 +60,8 @@ namespace SimpleAPI.Repositories.Cached
             if (book == null)
             {
                 book = await _repository.GetById(id).ConfigureAwait(false);
-                _cache.Add($"book_{id}_in_cache", book);
+                if (book != null)
+                    _cache.Add($"book_{id}_in_cache", book);
             }
 
             return await Task.FromResult(book).ConfigureAwait(false);
@@ -69,7 +70,10 @@ namespace SimpleAPI.Repositories.Cached
         public async Task<Book> Update(Book book)
         {
             var updatedBook = await _repository.Update(book).ConfigureAwait(false);
-            _cache.Add($"book_{book.Id}_in_cache", updatedBook);
+
+            if (updatedBook != null)
+                _cache.Add($"book_{book.Id}_in_cache", updatedBook);
+
             return await Task.FromResult(updatedBook).ConfigureAwait(false);
         }
 

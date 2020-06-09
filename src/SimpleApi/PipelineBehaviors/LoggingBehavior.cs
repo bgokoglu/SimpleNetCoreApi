@@ -7,9 +7,9 @@ namespace SimpleAPI.PipelineBehaviors
 {
     public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<TRequest> _logger;
 
-        public LoggingBehavior(ILogger logger)
+        public LoggingBehavior(ILogger<TRequest> logger)
         {
             _logger = logger;
         }

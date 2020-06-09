@@ -37,7 +37,7 @@ namespace SimpleAPI.Controllers
             var query = new GetBookByIdQuery(id);
             var response = await _mediator.Send(query).ConfigureAwait(false);
 
-            if (response != null)
+            if (response.Result != null)
                 return Ok(response.Result);
 
             return NoContent();
@@ -49,7 +49,7 @@ namespace SimpleAPI.Controllers
         {
             var response = await _mediator.Send(command).ConfigureAwait(false);
 
-            if (response == null)
+            if (response.Result == null)
                 return NoContent();
 
             if (response.Errors.Any())
@@ -64,7 +64,7 @@ namespace SimpleAPI.Controllers
         {
             var response = await _mediator.Send(new UpdateBookCommand { Id = id, Title = model.Title }).ConfigureAwait(false);
 
-            if (response != null)
+            if (response.Result != null)
                 return AcceptedAtAction("Put", response.Result);
 
             return NoContent();
@@ -76,7 +76,7 @@ namespace SimpleAPI.Controllers
         {
             var response = await _mediator.Send(new DeleteBookCommand { Id = id }).ConfigureAwait(false);
 
-            if (response != null)
+            if (response.Result != null)
                 return AcceptedAtAction("Delete", response.Result);
 
             return NoContent();

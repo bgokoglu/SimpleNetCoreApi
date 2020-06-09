@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using SimpleAPI.Commands;
 using SimpleAPI.Domain;
 using SimpleAPI.PipelineBehaviors;
@@ -31,12 +32,16 @@ namespace SimpleApi
             services.AddControllers();
             services.AddLazyCache();
 
+            //services.AddSingleton<ILoggerFactory, LoggerFactory>();
+            //services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+
             //AssemblyScanner.FindValidatorsInAssembly(typeof(Startup).Assembly)
             //    .ForEach(result => services.AddScoped(result.InterfaceType, result.ValidatorType));
 
             services.AddSingleton<IRepository<Book>, BookRepository>();
             services.Decorate<IRepository<Book>, CachedBookRepository>();
 
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddValidatorsFromAssembly(typeof(Startup).Assembly);
 

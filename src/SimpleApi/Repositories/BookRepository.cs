@@ -15,17 +15,6 @@ namespace SimpleAPI.Repositories
 
         public BookRepository()
         {
-            ////init books, this would be a db op
-            //cache.GetOrAdd("books_in_cache", () =>
-            //{
-            //    var lst = new List<Book>();
-            //    for (int i = 1; i < 6; i++)
-            //    {
-            //        lst.Add(new Book { Id = i, Title = "Book " + i });
-            //    }
-            //    return lst;
-            //});
-
             for (int i = 1; i < 6; i++)
             {
                 books.Add(new Book { Id = i, Title = "Book " + i });
@@ -56,6 +45,7 @@ namespace SimpleAPI.Repositories
         public async Task<Book> Update(Book book)
         {
             var item = books.Find(p => p.Id == book.Id);
+
             if (item != null)
             {
                 item.Title = book.Title;
