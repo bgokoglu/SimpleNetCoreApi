@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SimpleAPI.Attributes;
 using SimpleAPI.Commands;
 using SimpleAPI.Models;
 using SimpleAPI.Queries;
@@ -12,6 +13,7 @@ namespace SimpleAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiKeyAuthorize]
     public class BookController : ControllerBase
     {
         private readonly IMediator _mediator;
